@@ -18,6 +18,7 @@
                         <div class="card-header">
                             <h4 class="card-title">
                                 List Product
+                                <a href="{{ route('product.uploadExcel') }}" class="btn btn-danger btn-sm">Mass Upload</a>
                                 <a href="{{ route('product.create') }}" class="btn btn-primary btn-sm float-right">Add Product</a>
                             </h4>
                         </div>
@@ -52,24 +53,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($product as $row)
+                                        @forelse ($product as $prod)
                                         <tr>
                                             <td>
-                                                <img src="{{ asset('storage/products/' . $row->image) }}" width="100px" height="100px" alt="{{ $row->name }}">
+                                                <img src="{{ asset('storage/products/' . $prod->image) }}" width="150px" height="100px" alt="{{ $prod->name }}">
                                             </td>
                                             <td>
-                                                <strong>{{ $row->name }}</strong><br>
-                                                <label>Category: <span class="badge badge-info">{{ $row->category->name }}</span></label><br>
-                                                <label>Weight: <span class="badge badge-info">{{ $row->weight }} gr</span></label>
+                                                <strong>{{ $prod->name }}</strong><br>
+                                                <label>Weight: <span class="badge badge-primary">{{ $prod->weight }} Kg</span></label>
+                                                <p>Description : </p>
+                                                <strong style="font-weight: 4px;">{!! $prod->description !!}</strong>
                                             </td>
-                                            <td>Rp {{ number_format($row->price) }}</td>
-                                            <td>{{ $row->created_at->format('d-m-Y') }}</td>
-                                            <td>{!! $row->status_label !!}</td>
+                                            <td>$ {{ number_format($prod->price) }}</td>
+                                            <td>{{ $prod->created_at->diffForHumans() }} | {{ $prod->created_at->format('d-M-Y') }}</td>
+                                            <td>{!! $prod->status_label !!}</td>
                                             <td>
-                                                <form action="{{ route('product.destroy', $row->id) }}" method="post">
+                                                <form action="{{ route('product.destroy', $prod->id) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <a href="{{ route('category.edit', $row->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                    <a href="{{ route('product.edit', $prod->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                                     <button class="btn btn-danger btn-sm">Delete</button>
                                                 </form>
                                             </td>

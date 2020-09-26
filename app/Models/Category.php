@@ -8,6 +8,8 @@ use App\Models\Product;
 
 class Category extends Model
 {
+    protected $guarded = [];
+
     protected static function boot() {
         parent::boot();
 

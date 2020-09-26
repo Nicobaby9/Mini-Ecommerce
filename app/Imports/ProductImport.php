@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Imports;
+
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\{ToCollection, Importable, WithStartRow, WithChunkReading};
+
+class ProductImport implements WithStartRow, WithChunkReading
+{
+	use Importable;
+
+    public function startRow(): int {
+    	return 2;
+    }
+
+    public function chunkSize(): int {
+    	return 100;
+    }
+}

@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -27,6 +23,11 @@ Route::group(
 
 	function () {
 		Route::get('/home', 'HomeController@index')->name('home');
-		Route::resource('/category', 'Category\CategoryController')->except(['create', 'show']);	
-		Route::resource('/product', 'Product\ProductController');
+		Route::resource('category', 'Category\CategoryController')->except(['create', 'show']);	
+		Route::resource('product', 'Product\ProductController')->except(['show']);
+		Route::get('/product/uploadExcel', 'Product\ProductController@massUploadForm')->name('product.uploadExcel');
+		Route::post('/product/uploadExcel', 'Product\ProductController@massUpload')->name('product.saveUploadExcel');
 });
+
+Route::get('/', 'Ecommerce\FrontEndController@index')->name('front.index');
+Route::get('/product', 'Ecommerce\FrontEndController@product')->name('front.product');

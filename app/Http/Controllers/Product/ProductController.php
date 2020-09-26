@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\{Product, Category};
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Jobs\ProductJob;
 use File;
 
 class ProductController extends Controller
@@ -24,11 +25,6 @@ class ProductController extends Controller
         return view('products.index', compact('product'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $category = Category::orderBy('name', 'DESC')->get();
@@ -36,18 +32,12 @@ class ProductController extends Controller
         return view('products.create', compact('category'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|string|max:100',
             'description' => 'required',
-            'category_id' => 'required|exists:categories.id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|integer',
             'weight' => 'required|integer',
             'image' => 'required|image|mimes:png,jpeg,jpg'
@@ -73,46 +63,56 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $category = Category::orderBy('name', 'DESC')->get();
+
+        return view('products.edit', compact('product', 'category'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|string|max:50',
+            'description' => 'required',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'required|integer',
+            'weight' => 'required|integer',
+            'image' => 'nullable|image|mimes:png,jpeg,jpg'
+        ]);
+
+        $product = Product::findOrFail($id);
+        $filename = $product->image;
+
+        //IF ANY IMAGE CHANGED
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . Str::slug($request->name) . '.' . $file->getClientOriginalExtension();
+            //UPLOAD THIS FILE
+            $file->storeAs('public/products', $filename);
+            //DELETE OLD FILE
+            File::delete(storage_path('app/public/products/' . $product->image));
+        }
+
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'price' => $request->price,
+            'weight' => $request->weight,
+            'image' => $filename,
+            'status' => $request->status
+        ]);
+
+        return redirect(route('product.index'))->with(['success' => 'Product was updated.']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
@@ -120,5 +120,28 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect(route('products.index'))->with(['success' => 'Product successfully deleted.']);
+    }
+
+    public function massUploadForm() {
+        $category = Category::orderBy('name', 'DESC')->get();
+
+        return view('products.uploadForm', compact('category'));
+    }
+
+    public function massUpload(Request $request) {
+        $this->validate($request, [
+            'category_id' => 'required|exists:category_id,id',
+            'file' => 'required|mimes:xlsx'
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '-product' . $file->getClientOriginalExtension();
+            $file->storeAs('public/uploads', $filename);
+
+            ProductJob::dispatch($request->category_id, $filename);
+
+            return redirect()->back()->with(['success' => 'Upload Product Scheduled']);
+        }
     }
 }
