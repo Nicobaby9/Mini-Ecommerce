@@ -3,10 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
+    use Notifiable;
+    
+    protected $guarded = [];
+
     protected static function boot() {
         parent::boot();
 
@@ -25,5 +31,9 @@ class Customer extends Model
     public function getKeyType()
     {
         return 'string';
+    }
+
+    public function setPasswordAttribute($value) {
+        $this->attributes['password'] = bcrypt($value);
     }
 }

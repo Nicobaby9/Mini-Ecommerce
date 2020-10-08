@@ -83,7 +83,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <a href="{{ route('category.edit', $cat->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                                                 </form>
                                             </td>
                                         </tr>

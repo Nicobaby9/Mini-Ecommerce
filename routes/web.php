@@ -29,5 +29,25 @@ Route::group(
 		Route::post('/product/uploadExcel', 'Product\ProductController@massUpload')->name('product.saveUploadExcel');
 });
 
-Route::get('/', 'Ecommerce\FrontEndController@index')->name('front.index');
-Route::get('/product', 'Ecommerce\FrontEndController@product')->name('front.product');
+Route::namespace('Ecommerce')->group(function() {
+	Route::get('/', 'FrontEndController@index')->name('front.index');
+	Route::get('/product', 'FrontEndController@product')->name('front.product');
+	Route::get('/category/{slug}', 'FrontEndController@categoryProduct')->name('front.category');
+	Route::get('/product/{slug}', 'FrontEndController@show')->name('front.show_product');
+	Route::get('/cart', 'CartController@listCart')->name('front.list_cart');
+	Route::post('cart', 'CartController@addToCart')->name('front.cart');
+	Route::post('/cart/update', 'CartController@updateCart')->name('front.update_cart');
+	Route::get('/checkout', 'CartController@checkout')->name('front.checkout');
+	Route::post('/checkout', 'CartController@checkoutProcess')->name('front.store_checkout');
+	Route::get('/checkout/{invoice}', 'CartController@checkoutFinish')->name('front.finish_checkout');
+});
+
+Route::group(['prefix' => 'member', 'namespace' => 'ecommerce'], function() {
+	Route::get('login', 'LoginController@loginForm')->name('customer.login');
+	Route::get('verify/{token}', 'FrontEndController@verifyCustomerRegistration')->name('customer.verify');
+	Route::post('login', 'LoginController@login')->name('customer.post_login');
+	Route::group(['middleware' => 'customer'], function() {
+		Route::get('dashboard', 'LoginController@dashboard')->name('customer.dashboard');
+		Route::get('logout', 'LoginController@logout')->name('customer.logout');
+	});
+});

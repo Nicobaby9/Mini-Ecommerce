@@ -31,7 +31,11 @@
 				</div>
 				<div class="float-right">
 					<ul class="right_side">
-						<li><a href="{{ url('/login') }}">Login/Register</a></li>
+						@if(auth()->guard('customer')->check())
+							<li><a href="{{ route('customer.logout') }}">Logout</a></li>
+						@else
+							<li><a href="{{ route('customer.login') }}">Login/Register</a></li>
+						@endif
 						<li><a href="#">My Account</a></li>
 						<li><a href="contact.html">Contact Us</a></li>
 					</ul>
@@ -80,9 +84,9 @@
 									</li>
 									<hr>
 									<li class="nav-item">
-										<a href="#" class="icons">
-											<i class="lnr lnr lnr-cart"></i>
-										</a>
+									  <a href="{{ route('front.list_cart') }}" class="icons">
+									    <i class="lnr lnr lnr-cart"></i>
+									  </a>
 									</li>
 									<hr>
 								</ul>
@@ -234,5 +238,6 @@
 	<script src="{{ asset('ecommerce/vendors/counter-up/jquery.counterup.js') }}"></script>
 	<script src="{{ asset('ecommerce/js/mail-script.js') }}"></script>
 	<script src="{{ asset('ecommerce/js/theme.js') }}"></script>
+	@yield('js')
 </body>
 </html>

@@ -38,11 +38,11 @@ class Product extends Model
         return '<span class="badge badge-success"> Active </span>';
     }
 
-    public function category() {
-        return $this->belongsTo(Category::class);
-    }
-
     public function setSlugAttribute($value) {
         $this->attributes['slug'] = Str::slug($value);
+    }
+
+    public function category() {
+        return $this->belongsTo(Category::class);
     }
 }
