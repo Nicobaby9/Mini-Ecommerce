@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class Customer extends Authenticatable
+class Payment extends Model
 {
-    use Notifiable;
-    
-    protected $guarded = [];
+	protected $guarded = [];
 
     protected static function boot() {
         parent::boot();
@@ -32,13 +28,4 @@ class Customer extends Authenticatable
     {
         return 'string';
     }
-
-    public function setPasswordAttribute($value) {
-        $this->attributes['password'] = bcrypt($value);
-    }
-
-    public function district() {
-        return $this->belongsTo(District::class);
-    }
 }
-

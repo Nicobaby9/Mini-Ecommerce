@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Province;
 
 class City extends Model
 {
     public function province() {
-    	return $this->belongsTo('App\Models\Province', 'province_id');
+    	return $this->belongsTo(Province::class);
     }
 }

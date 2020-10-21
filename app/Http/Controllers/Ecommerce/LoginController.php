@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ecommerce;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\{Order};
 
 class LoginController extends Controller
 {
@@ -12,7 +13,7 @@ class LoginController extends Controller
     	return view('layouts.ecommerce.login');
     }
 
-    public function login() {
+    public function login(Request $request) {
     	$this->validate($request, [
     		'email' => 'required|email|exists:customers,email',
     		'password' => 'required|string'
@@ -28,8 +29,12 @@ class LoginController extends Controller
     	return redirect()->back()->with(['error' => 'Email / Password Salah']);
     }
 
-    public function dashboad() {
-    	return view('layouts.ecommerce.dashboard');
+    public function dashboard() {
+        $orders = Order::selectRaw('COALESCE(sum(CASE WHEN status = 0 THEN subtotal END), 0) as pending, COALESCE(count(CASE WHEN status = 3 THEN subtotal END), 0) as shipping, 
+            COALESCE(count(CASE WHEN status = 4 THEN subtotal END), 0) as completeOrder')
+            ->where('customer_id', auth()->guard('customer')->user()->id)->get();
+
+    	return view('layouts.ecommerce.dashboard', compact('orders'));
     }
 
     public function logout() {

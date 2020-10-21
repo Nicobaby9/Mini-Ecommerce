@@ -159,9 +159,9 @@ class CartController extends Controller
 
     		DB::commit();
 			$carts = [];
-			$cookie = cookie('aerials-carts', json_encode($carts), true);
+			$cookie = cookie('aerials-carts', json_encode($carts), 2000);
 
-            Mail::to($request->email)->send(new CustomerRegisterMail($customer, $randomPassword));
+            Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password));
 			return redirect(route('front.finish_checkout', $order->invoice))->cookie($cookie);
     	} catch (\Exception $e) {
     		DB::rollback();
