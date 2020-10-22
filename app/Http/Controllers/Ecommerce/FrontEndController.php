@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Ecommerce;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\{Product, Category, Customer};
+use App\Models\{Product, Category, Customer, Province};
 
 class FrontEndController extends Controller
 {
@@ -72,6 +72,8 @@ class FrontEndController extends Controller
         if ($request->password != '') {
             $data['password'] = $request->password;
         }
+
+        dd($user);
 
         $user->update($data);
 

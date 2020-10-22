@@ -54,7 +54,7 @@
 						@else
 							<li><a href="{{ route('customer.login') }}">Login/Register</a></li>
 						@endif
-						<li><a href="#">My Account</a></li>
+						<li><a href="{{ route('customer.dashboard') }}">My Account</a></li>
 						<li><a href="contact.html">Contact Us</a></li>
 					</ul>
 				</div>

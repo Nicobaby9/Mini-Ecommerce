@@ -55,5 +55,7 @@ Route::group(['prefix' => 'member', 'namespace' => 'ecommerce'], function() {
 		Route::post('payment', 'OrderController@storePayment')->name('customer.storePayment');
 		Route::get('setting', 'FrontEndController@customerSettingForm')->name('customer.settingForm');
 		Route::post('setting', 'FrontEndController@customerSettingForm')->name('customer.setting');
+		Route::get('orders/{invoice}', 'OrderController@view')->name('customer.view_order');
+		Route::get('orders/pdf/{invoice}', 'OrderController@pdf')->name('customer.order_pdf');
 	});
 });

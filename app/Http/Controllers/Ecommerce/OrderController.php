@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\{Order, Payment};
 use Carbon\Carbon;
 use DB;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -48,7 +49,7 @@ class OrderController extends Controller
     	try{ 
     		$order = Order::where('invoice', $request->invoice)->first();
 
-    		if ($order->status == 0 && $request->hasFile('proof')) {
+    		if ($order->subtotal != $request->amount) {
     			$file = $request->file('proof');
     			$filename = time() . '.' . $file->getClientOriginalExtension();
     			$file->storeAs('public/payment', $filename);
@@ -67,7 +68,7 @@ class OrderController extends Controller
 
     			DB::commit();
 
-    			return redirect()->back()->with(['success' => 'Pesanan Dikonfirmasi.']);
+    			return redirect()->back()->with(['error' => 'Error, Pembayaran Harus Sama Dengan Tagihan.']);
     		}
 
     		return redirect()->back()->with(['error' => 'Errpr, upload bukti transfer']);
@@ -76,5 +77,17 @@ class OrderController extends Controller
 
     		return redirect()->back()->with(['error' => $e->getMessate()]);
     	}
+    }
+
+    public function pdf($invoice) {
+        $order = Order::with(['district.city.province', 'details', 'details.product', 'payment'])->where('invoice', $invoice)->first();
+
+        if (!Gate::forUser(auth()->guard('customer')->user())->allows('order-view', $order)) {
+            return redirect(route('customer.view_order', $order->invoice));
+        }
+
+        $pdf = PDF::loadView('ecommerce.orders.pdf', compact('order'));
+
+        return $pdf->stream();
     }
 }
