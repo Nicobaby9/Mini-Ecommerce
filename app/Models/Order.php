@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use App\Models\{District, OrderDetail, Payment};
+use App\Models\{District, OrderDetail, Payment, Customer};
 
 class Order extends Model
 {
@@ -52,5 +52,13 @@ class Order extends Model
 
     public function payment() {
         return $this->hasOne(Payment::class);
+    }
+
+    public function customer() {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function return() {
+        return $this->hasOne(OrderReturn::class);
     }
 }

@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Payment extends Model
+class OrderReturn extends Model
 {
 	protected $guarded = [];
-    protected $append = ['status_label'];
+    protected $appends = ['status_label'];
 
     protected static function boot() {
         parent::boot();
@@ -31,10 +31,12 @@ class Payment extends Model
     }
 
     public function getStatusLabelAttribute() {
-        if ($this->status == 0) {
-            return '<span class="badge badge-secondary">Menunggu Konfirmasi </span>';
+        if($this->status == 0) {
+            return '<span class="badge badge-secondary"> Menunggu Konfirmasi </span>';
+        } elseif ($this->status == 2) {
+            return '<span class="badge badge-danger"> Ditolak </span>';
         }
 
-        return '<span class="badge badge=success"> Diterima </span>';
+        return '<span class="badge badge-success"> Selesai </span>';
     }
 }

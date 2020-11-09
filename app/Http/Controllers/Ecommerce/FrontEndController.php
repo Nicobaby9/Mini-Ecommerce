@@ -62,7 +62,7 @@ class FrontEndController extends Controller
             'name' => 'required|string|max:100',
             'phone_number' => 'required|max:15',
             'address' => 'required|string',
-            'district_id' => 'rqeuired:exists:districts,id',
+            'district_id' => 'required|exists:districts,id',
             'password' => 'nullable|string|min:6'
         ]);
 
@@ -73,8 +73,7 @@ class FrontEndController extends Controller
             $data['password'] = $request->password;
         }
 
-        dd($user);
-
+        // dd($user);
         $user->update($data);
 
         return redirect()->back()->with(['success' => 'Profil anda berhasil diubah.']);

@@ -35,7 +35,7 @@
                 <div class="card-header">
                     <h4 class="card-title">Informasi Pribadi</h4>
                 </div>
-<div class="card-body">
+                <div class="card-body">
                     @if (session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
